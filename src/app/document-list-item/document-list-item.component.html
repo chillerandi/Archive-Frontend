@@ -1,0 +1,11 @@
+<td>{{ document.title }}</td>
+<td>{{ document.description }}</td>
+<td>{{ document.tags }}</td>
+<td>
+  <div class="ui animated button" (click)="showDetails(document)">
+    <div class="visible content">Bearbeiten</div>
+    <div class="hidden content">
+      <i class="right arrow icon"></i>
+    </div>
+  </div>
+</td>
