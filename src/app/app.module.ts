@@ -27,7 +27,8 @@ import { DocumentListItemComponent } from './document-list-item/document-list-it
   ],
   providers: [
     TreeService,
-    DocumentService
+    DocumentService,
+    DataTableComponent
   ],
   bootstrap: [AppComponent]
 })

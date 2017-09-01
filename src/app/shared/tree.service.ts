@@ -12,6 +12,7 @@ export class TreeService {
 
   private headers: Headers = new Headers();
   files: File[];
+  public _directory: string;
 
   apiUrl(): string {
     if (this.api.slice(-1) === '/') { return this.api; }
@@ -22,11 +23,13 @@ export class TreeService {
     this.headers.append('Content-Type', 'application/json');
   }
 
+   setDirectory(value: string) {
+    this._directory = value;
+  }
+
   getAll() {
     return this.http.get(this.apiUrl() + 'tree/')
       .retry(3)
-      .map(
-      res => res.json()
-      );
+      .map(res => res.json());
   }
 }

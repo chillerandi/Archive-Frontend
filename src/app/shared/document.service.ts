@@ -1,59 +1,37 @@
+import { TreeService } from './tree.service';
+import { DocumentTreeComponent } from './../document-tree/document-tree.component';
 import { DataTableComponent } from './../data-table/data-table.component';
 import { Document } from './document';
-import { Injectable } from '@angular/core';
+import { Injectable, Inject } from '@angular/core';
 import 'rxjs';
 import { Observable } from 'rxjs/Observable';
 import { Http } from '@angular/http';
 
 
-
 @Injectable()
 export class DocumentService {
 
+  http: any;
+  myObject: Document[];
+  directory: any;
+  documentTree: DocumentTreeComponent;
   private headers: Headers = new Headers();
 
-  myObject: Document[];
+  /* apiUrl(): string {
+    if (this.api.slice(-1) === '/') { return this.api; }
+    return this.api + '/';
+  } */
 
-  constructor(private _http: Http) {
-    this.myObject = [
-      new Document(
-        1,
-        'TestTitle0001',
-        'TestDescription0001',
-        'TestDirectory0001',
-        ['TestTag0001', 'TestTag0002'],
-        'TestHttpModule'
-      )
-    ]
-  }
-
-  create(document: Document) {
-    return this._http.post('/documents', document)
-      .map(data => data.json()).toPromise();
-  }
-
-  destroy(document: Document) {
-    return this._http.delete('/documents/' + document._id)
-      .map(data => data.json()).toPromise();
-  }
-
-  update(document: Document) {
-    return this._http.put('/documents/' + document._id, document)
-      .map(data => data.json()).toPromise();
-  }
+  constructor(/* @Inject('API_URL') private api: string, */ private _http: Http, private _ts: TreeService) {
+    this.headers.append('Content-Type', 'application/json');
+   }
 
   getDocuments() {
-    return this._http.get('/documents/')
+    /* return this._http.get(this.apiUrl() + this.directory)
+      .retry(3)
+      .map(res => res.json()).toPromise(); */
+      this.directory = this._ts._directory;
+     return this._http.get('/documents/'  + this.directory )
       .map(data => data.json()).toPromise();
   }
-
-  public getDocumentsFromNode() {
-    return this.myObject;
-  }
-
-  getDocument(document: Document) {
-    return this._http.get('/documents/' + document._id)
-      .map(data => data.json()).toPromise();
-  }
-
 }

@@ -1,10 +1,10 @@
+import { element } from 'protractor';
 import { DocumentService } from './../shared/document.service';
 import { Document } from './../shared/document';
 import { DataTableComponent } from './../data-table/data-table.component';
 import { Http } from '@angular/http';
 import { TreeService } from './../shared/tree.service';
 import { Component, OnInit, Output, EventEmitter } from '@angular/core';
-
 
 declare var jquery: any;
 declare var $: any;
@@ -15,38 +15,44 @@ declare var $: any;
   styleUrls: ['./document-tree.component.css'],
   providers: [
     TreeService,
-    DocumentService
+    DocumentService,
+    DataTableComponent
   ]
 })
 
 export class DocumentTreeComponent implements OnInit {
 
-  documents: Document[];
-  documentsTest: Document[];
-  /* ds: DocumentService; */
+  _documents: Document[];
+  _directory: any;
 
-  constructor(private ts: TreeService, public ds: DocumentService) { }
+  constructor(private _ts: TreeService, private _ds: DocumentService, private _tableDocTable: DataTableComponent) { }
 
   ngOnInit() {
-    const myTree = this.ts.getAll().subscribe(res => {
-      this.documents = res;
+    const myTree = this._ts.getAll().subscribe(res => {
+      this._documents = res;
 
-      $('#tree').treeview({ data: this.documents })
+      const self = this;
+      $('#tree').treeview({ data: this._documents })
         .on('nodeSelected', function (event, data) {
           console.log(data.text);
+          let _directory = data.text;
+          let _parent = $('#tree').treeview('getParent', data);
 
-          let directory = data.text;
-          let parent = $('#tree').treeview('getParent', data);
-
-          while(typeof parent.text === 'string' ){
-            directory = '/' + parent.text + '/' + directory;
-            parent = $('#tree').treeview('getParent', parent);
+          while(typeof _parent.text === 'string' ){
+            _directory =  /* '/' + */  _parent.text + '/' + _directory;
+            _parent = $('#tree').treeview('getParent', _parent);
           }
-
-          console.log(directory);
+          console.log(_directory);
+          self._ts.setDirectory(_directory);
+          self._ds.getDocuments();
+         /* self._ds.getDocuments(); */
         });
     });
     console.log('Running in debug');
+  }
+
+  public getDocumentsFromNode() {
+    return this._ds.getDocuments();
   }
 
 }
